@@ -6,6 +6,8 @@ use std::path::Path;
 
 use rmp3::{Decoder, Frame};
 
+const MIN_SAMPLE: i16 = 1;
+
 fn read_file<P>(path: P) -> Result<Vec<u8>, Box<dyn Error>>
 where
     P: AsRef<Path>,
@@ -34,7 +36,7 @@ where
         if sample_count != 0 {
             length += sample_count as f32 / sample_rate as f32;
         }
-        if samples.iter().all(|s| *s == 0) {
+        if samples.iter().all(|s| *s <= MIN_SAMPLE && *s >= -MIN_SAMPLE) {
             if zero_begin.is_none() {
                 zero_begin = Some(length);
             }
